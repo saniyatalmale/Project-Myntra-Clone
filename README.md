@@ -30,42 +30,18 @@ Tools Required:
 - Connect to the instance using SSH.
 
 ### Configuring Jenkins server
-
-Pre-Requisites:
-         
-   -  Java-17
-   -  Jenkins
-
-Install Java
-
-```shell
-sudo apt update -y
-sudo apt install openjdk-17-jre-headless -y
-java -version
-```
-
-
-Install Jenkins
-
-```
-sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
-https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-```
-
-```
-echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
-https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-/etc/apt/sources.list.d/jenkins.list > /dev/null
-```
-
-```
+````
+sudo apt update
+sudo apt install fontconfig openjdk-21-jre -y
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
 sudo apt-get update
-sudo apt-get install jenkins
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-```
-
-Install NodeJS-16
+sudo apt-get install jenkins -y
+````
+### Install NodeJS-16
 
 ```shell
 curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
@@ -128,18 +104,15 @@ sudo apt update -y
 sudo apt install docker.io -y
 sudo systemctl enable docker
 sudo systemctl start docker
-sudo systemctl status docker
+sudo usermod -aG docker jenkins
+sudo usermod -aG docker ubuntu
+newgrp docker
+sudo chmod 777 /var/run/docker.sock
+
 ```
 
 
-Grant Jenkins user and ubuntu user permission to docker deamon.
 
-```
-sudo su - 
-usermod -aG docker jenkins
-usermod -aG docker ubuntu
-systemctl restart docker
-```
 
 Once you are done with the above steps, it is better to restart Jenkins.
 
