@@ -287,149 +287,75 @@ pipeline {
 ```
 
 
-### Install kubectl:
-
-- Set up kubectl on EC2 instance:
-
-```
-curl -LO https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-kubectl version --client
-```
-
-***Note***:  Before install Kind cluster you should create `config.yml` file and past below content then you can create your Kind cluster
-
-```
-# three node (two workers) cluster config
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  extraPortMappings:
-    - containerPort: 32001
-      hostPort: 32001
-      protocol: TCP
-    - containerPort: 32002
-      hostPort: 32002
-      protocol: TCP
-- role: worker
-  extraPortMappings:
-    - containerPort: 32003
-      hostPort: 32003
-      protocol: TCP
-- role: worker
-  extraPortMappings:
-    - containerPort: 32004
-      hostPort: 32004
-      protocol: TCP
-```
-
-
-
-### Install Kind:
-
-- Set up Kind on the EC2 instance:
-
-```
-# For AMD64 / x86_64
-[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
-# For ARM64
-[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-arm64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
-```
-
-- Set up kind cluster:
-
-```
-kind create cluster --image kindest/node:v1.30.0@sha256:047357ac0cfea04663786a612ba1eaba9702bef25227a794b52890dd8bcd692e --name <your_cluster_name> --config config.yml
-```
+### Create EKS Cluster
 
 ### Configure ArgoCD
 
-Go to operatorhub.io, search for ArgoCD and click `Install` [Install Argo CD](https://operatorhub.io/operator/argocd-operator) 
 
--  Install Operator Lifecycle Manager (OLM), a tool to help manage the Operators running on your cluster.
+Create a namespace:
 
-```
-curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v0.28.0/install.sh | bash -s v0.28.0
-```
-
--  Install the operator by running the following command:What happens when I execute this command:
-
-```
-kubectl create -f https://operatorhub.io/install/argocd-operator.yaml
+```bash
+kubectl create namespace argocd
 ```
 
-This Operator will be installed in the "operators" namespace and will be usable from all namespaces in the cluster.
+Apply official ArgoCD installation:
 
--  After install, watch your operator come up using next command:
-
-```
-kubectl get svc -n operators
+```bash
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
+Wait 2–3 minutes:
 
-The following example shows the most minimal valid manifest to create a new Argo CD cluster with the default configuration.
-
-- create argocd-basic.yaml file and past below content:
-
-```
-apiVersion: argoproj.io/v1beta1
-kind: ArgoCD
-metadata:
-  name: example-argocd
-  labels:
-    example: basic
-spec: {}
+```bash
+kubectl get pods -n argocd
 ```
 
+✅ All pods should be in `Running` state.
+
+---
+
+###  Patch `argocd-server` service to use LoadBalancer
+
+```bash
+kubectl patch svc argocd-server -n argocd \
+  -p '{"spec": {"type": "LoadBalancer"}}'
 ```
-kubectl create -f argocd-basic.yaml
-kubectl get pods
-kubectl get svc
+
+---
+
+### 🔍 Step 3: Get LoadBalancer URL
+
+Run:
+
+```bash
+kubectl get svc argocd-server -n argocd
 ```
 
 
-***Note***:  It will take some time to bring up the pods
+### 🌐  Access ArgoCD UI
 
-Once the pods are up change the ClusterIP service to Nodeport to access Argo CD UI
-
-
-```
-kubectl edit svc example-argocd-server
-```
-
-
-Change `type: ClusterIP` to `type: NodePort` and also change in http nodeport:`port no.`
-
- 
-```
-kubectl get pods
-kubectl get svc
-```
-
-***Note***:  As we are using Nodeport service we can access ArgoCD UI within the network
-
-Now copy the ip-address of ec2 instance paste it in the browser.
-   
-![Screenshot ](https://i.imgur.com/HBzI2ey.png)
-
-Username is 'admin' and for password
+Open in browser:
 
 ```
-kubectl get secret
-kubectl edit secret example-argocd-cluster
+http://loadbalancer-link
+```
+note: click on advancd
+---
+
+### 🔐 Get ArgoCD admin password
+
+```bash
+kubectl get secret argocd-initial-admin-secret -n argocd \
+  -o jsonpath="{.data.password}" | base64 -d
 ```
 
-Copy the encoded secret
+✅ Login with:
 
-```
-echo <encoded-secret> | base64 -d
-```
+* **Username**: `admin`
+* **Password**: (above decoded)
 
-copy the decoded secret  password and login
-   
+
+
 Click on ``CREATE APPLICATION``
    
 ![Screenshot ](https://i.imgur.com/t31vqVp.png)
