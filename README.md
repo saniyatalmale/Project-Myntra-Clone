@@ -1,9 +1,4 @@
-# NodeJS web application deploy on Kind
-
-
-This is a simple NodeJS web application that can be built using npm. NodeJS dependencies are handled using the package.json at the root directory of the repository.
-
-Here are the step-by-step details to set up an end-to-end Jenkins pipeline for a NodeJS application using SonarQube, Argo CD and Kind:
+# MYntra Clone
 
 Prerequisites:
 
@@ -20,7 +15,7 @@ Tools Required:
    - Jenkins
    - SonarQube
    - Docker
-   - Kind
+   - EKS
    - ArgoCD
    - Prometheus
    - Grafana
