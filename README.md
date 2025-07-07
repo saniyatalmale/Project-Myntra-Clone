@@ -186,118 +186,104 @@ For DockerHub
    -  Give the username and password and give your `Dockerhub username` and `Dockerhub Password` id is `docker`.
    -  Click Save
 
-### Install Trivy:
 
-To install Trivy:
-     
-```
-sudo apt-get install wget apt-transport-https gnupg lsb-release
-wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-sudo apt-get update
-sudo apt-get install trivy        
-```
-
-        
-
-To scan image using trivy:
-        
-```
-trivy image <imageid>
-```
 - Jenkins Pipeline
 
 ```groovy
-pipeline{
+pipeline {
     agent any
-    tools{
+
+    tools {
         jdk 'jdk17'
         nodejs 'node16'
     }
+
     environment {
-        SCANNER_HOME=tool 'sonar-scanner'
-        DOCKER_IMAGE = "myntra" // Define your Docker image name here
-        DOCKER_REGISTRY = "vaibhavbankar" // Define your Docker registry here
-        DOCKER_CREDENTIALS_ID = "docker" // Replace with your actual credentials ID
-        MANIFEST_FILE = "deployment-service.yml" // Path to your manifest file
-        GIT_REPO_NAME = "pk_myntra"
-        GIT_USER_NAME = "vaibankar"
+        SCANNER_HOME         = tool 'sonar-scanner'
+        DOCKER_IMAGE         = 'myntraa'
+        DOCKER_REGISTRY      = 'abhipraydh96'
+        DOCKER_CREDENTIALS_ID = 'docker-cred'
+        MANIFEST_FILE        = 'deployment-service.yml'
+        GIT_REPO_NAME        = 'Project-Myntra-Clone'
+        GIT_USER_NAME        = 'abhipraydhoble'
+        GIT_EMAIL            = 'abhipraydh96@gmail.com'
     }
+
     stages {
-        stage('clean workspace'){
-            steps{
+        stage('Clean Workspace') {
+            steps {
                 cleanWs()
             }
         }
-        stage('Checkout from Git'){
-            steps{
-                git branch: 'main', url: 'https://github.com/vaibankar/pk_myntra.git'
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: "https://github.com/${env.GIT_USER_NAME}/${env.GIT_REPO_NAME}.git"
             }
         }
-        stage("Sonarqube Analysis "){
-            steps{
+
+        stage('SonarQube Analysis') {
+            steps {
                 withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Myntra \
-                    -Dsonar.projectKey=Myntra '''
-                }
-            }
-        }
-        stage("quality gate"){
-           steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' 
-                }
-            } 
-        }
-        stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
                     sh """
-                    docker build -t ${imageTag} .
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectName=Myntra \
+                        -Dsonar.projectKey=Myntra
                     """
                 }
             }
         }
-        stage('Push Docker Image') {
+
+        stage('Quality Gate') {
+            steps {
+                waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Build & Push Docker Image') {
             steps {
                 script {
                     def imageTag = "${DOCKER_IMAGE}:${BUILD_NUMBER}"
                     def registryImageTag = "${DOCKER_REGISTRY}/${imageTag}"
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){
+
+                    sh "docker build -t ${imageTag} ."
+
+                    withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, toolName: 'docker') {
                         sh """
-                        docker tag ${imageTag} ${registryImageTag}
-                        docker push ${registryImageTag}
+                            docker tag ${imageTag} ${registryImageTag}
+                            docker push ${registryImageTag}
                         """
                     }
                 }
             }
         }
-        stage('Update Manifest File') {
+
+        stage('Update Manifest and Push to GitHub') {
             steps {
                 script {
-                    def newTag = "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
-                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                    sh """
-                    git config user.email "vaibhavmbankar111@gmail.com"
-                    git config user.name "vaibankar"
-                    BUILD_NUMBER=${BUILD_NUMBER}
-                    sed -i 's|image: .*|image: ${newTag}|g' ${MANIFEST_FILE}
-                    git add deployment-service.yml
-                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                    """
+                    def newImage = "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
+                    withCredentials([usernamePassword(credentialsId: 'git-cred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                            git config user.email "abhipraydh96@gmail.com"
+                            git config user.name "abhipraydhoble"
+                            sed -i 's|image: .*|image: ''' + newImage + '''|g' deployment-service.yml
+                            git add deployment-service.yml
+                            git commit -m "Update image to ''' + BUILD_NUMBER + '''" || echo "No changes to commit"
+                            git push https://${GIT_USER}:${GIT_PASS}@github.com/abhipraydhoble/Project-Myntra-Clone.git HEAD:main
+                        '''
+                    }
                 }
             }
         }
     }
- }
 }
+
 ```
 
 
