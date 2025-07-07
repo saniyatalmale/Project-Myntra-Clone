@@ -199,14 +199,14 @@ pipeline {
     }
 
     environment {
-        SCANNER_HOME         = tool 'sonar-scanner'
-        DOCKER_IMAGE         = 'myntraa'
-        DOCKER_REGISTRY      = 'abhipraydh96'
+        SCANNER_HOME          = tool 'sonar-scanner'
+        DOCKER_IMAGE          = 'myntraa'
+        DOCKER_REGISTRY       = 'abhipraydh96'
         DOCKER_CREDENTIALS_ID = 'docker-cred'
-        MANIFEST_FILE        = 'deployment-service.yml'
-        GIT_REPO_NAME        = 'Project-Myntra-Clone'
-        GIT_USER_NAME        = 'abhipraydhoble'
-        GIT_EMAIL            = 'abhipraydh96@gmail.com'
+        MANIFEST_FILE         = 'k8s/deployment.yml'
+        GIT_REPO_NAME         = 'Project-Myntra-Clone'
+        GIT_USER_NAME         = 'abhipraydhoble'
+        GIT_EMAIL             = 'abhipraydh96@gmail.com'
     }
 
     stages {
@@ -269,14 +269,14 @@ pipeline {
                 script {
                     def newImage = "${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${BUILD_NUMBER}"
                     withCredentials([usernamePassword(credentialsId: 'git-cred', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
-                        sh '''
-                            git config user.email "abhipraydh96@gmail.com"
-                            git config user.name "abhipraydhoble"
-                            sed -i 's|image: .*|image: ''' + newImage + '''|g' deployment-service.yml
-                            git add deployment-service.yml
-                            git commit -m "Update image to ''' + BUILD_NUMBER + '''" || echo "No changes to commit"
-                            git push https://${GIT_USER}:${GIT_PASS}@github.com/abhipraydhoble/Project-Myntra-Clone.git HEAD:main
-                        '''
+                        sh """
+                            git config user.email "${GIT_EMAIL}"
+                            git config user.name "${GIT_USER_NAME}"
+                            sed -i 's|image: .*|image: ${newImage}|g' ${MANIFEST_FILE}
+                            git add ${MANIFEST_FILE}
+                            git commit -m "Update image to ${BUILD_NUMBER}" || echo "No changes"
+                            git push https://${GIT_USER}:${GIT_PASS}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                        """
                     }
                 }
             }
