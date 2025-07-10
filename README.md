@@ -283,6 +283,10 @@ pipeline {
 
 
 ### Create EKS Cluster
+````
+https://github.com/abhipraydhoble/CDEC-Devops/blob/main/Kubernetes/eks-setup.md
+````
+**Note:** check your region while creating eks cluster
 
 ### Configure ArgoCD
 
