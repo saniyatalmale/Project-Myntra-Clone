@@ -78,7 +78,9 @@ Install the Required plugins in Jenkins
    - Log in to Jenkins.
    - Go to Manage Jenkins > Manage Plugins.
    - In the Available tab, search for
+        - Stage View
         - NodeJs
+        - Eclipse Temurin installer
         - SonarQube Scanner
         - CloudBees Docker Build and Publish plugin, Docker Pipeline, Docker plugin, docker-build-step
    - Select the plugins and click the Install button.
