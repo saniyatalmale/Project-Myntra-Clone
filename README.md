@@ -40,12 +40,7 @@ echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
 sudo apt-get update
 sudo apt-get install jenkins -y
 ````
-### Install NodeJS-16
 
-```shell
-curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
-sudo apt install nodejs -y
-```
 
 
 **Note: ** By default, Jenkins will not be accessible to the external world due to the inbound traffic restriction by AWS. Open port 8080 in the inbound traffic rules as show below.
