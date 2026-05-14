@@ -371,9 +371,14 @@ kubectl get secret argocd-initial-admin-secret -n argocd \
 
 Click on ``CREATE APPLICATION``
    
-<img width="1891" height="827" alt="image" src="https://github.com/user-attachments/assets/5feb2a46-aa59-4c75-bb57-9254e1fca40c" />
-<img width="1423" height="425" alt="image" src="https://github.com/user-attachments/assets/a831ba69-c107-4707-9a02-386bbf91fd5e" />
-<img width="1427" height="351" alt="image" src="https://github.com/user-attachments/assets/b41386f7-da65-4920-b951-b390255e025e" />
+<img width="1912" height="967" alt="image" src="https://github.com/user-attachments/assets/03183fd2-e1c9-4e23-8ecc-6e07845494d7" />
+<img width="1536" height="907" alt="image" src="https://github.com/user-attachments/assets/fe12fec8-5d1b-46b7-b75f-847ffcf9f643" />
+<img width="1416" height="527" alt="image" src="https://github.com/user-attachments/assets/e560510d-1234-425d-960f-cc1db5769f33" />
+<img width="1445" height="397" alt="image" src="https://github.com/user-attachments/assets/bd8166b2-a7f5-4d9e-ad6d-2a9f7716e24b" />
+<img width="1605" height="657" alt="image" src="https://github.com/user-attachments/assets/67247c79-5e91-4801-8b42-cdc1c355099f" />
+<img width="1842" height="891" alt="image" src="https://github.com/user-attachments/assets/05cb7c5f-b087-4ebd-b310-400ecfef9719" />
+
+
 
 
 
