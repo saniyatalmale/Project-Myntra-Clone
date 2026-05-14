@@ -376,7 +376,8 @@ Click on ``CREATE APPLICATION``
 <img width="1416" height="527" alt="image" src="https://github.com/user-attachments/assets/e560510d-1234-425d-960f-cc1db5769f33" />
 <img width="1445" height="397" alt="image" src="https://github.com/user-attachments/assets/bd8166b2-a7f5-4d9e-ad6d-2a9f7716e24b" />
 <img width="1605" height="657" alt="image" src="https://github.com/user-attachments/assets/67247c79-5e91-4801-8b42-cdc1c355099f" />
-<img width="1842" height="891" alt="image" src="https://github.com/user-attachments/assets/05cb7c5f-b087-4ebd-b310-400ecfef9719" />
+
+
 
 
 
@@ -385,12 +386,9 @@ Click on ``CREATE APPLICATION``
    
 Now click ``CREATE``
    
-<img width="568" height="440" alt="image" src="https://github.com/user-attachments/assets/14fd8a68-2215-4eab-a23f-5e82ac6b7243" />
+<img width="1842" height="891" alt="image" src="https://github.com/user-attachments/assets/05cb7c5f-b087-4ebd-b310-400ecfef9719" />
 
-
-![image](https://github.com/user-attachments/assets/cd0ae77c-629a-4e90-8c67-a0c25c3311ba)
-
-![image](https://github.com/user-attachments/assets/6696696c-524e-4bb0-8b82-4265018f4950)
+<img width="1896" height="906" alt="image" src="https://github.com/user-attachments/assets/600313cd-1129-4969-80a5-ae147c070540" />
 
 ### (Monitoring)Install Prometheus using Helm:
 - installl helm
