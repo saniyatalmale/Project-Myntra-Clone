@@ -263,8 +263,10 @@ pipeline {
 
                     sh "docker build -t ${imageTag} ."
 
-                    withDockerRegistry(credentialsId: DOCKER_CREDENTIALS_ID, toolName: 'docker') {
+                    withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+            	
                         sh """
+                            docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}
                             docker tag ${imageTag} ${registryImageTag}
                             docker push ${registryImageTag}
                         """
@@ -292,6 +294,7 @@ pipeline {
         }
     }
 }
+
 
 ```
 
