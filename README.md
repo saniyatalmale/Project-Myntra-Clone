@@ -462,7 +462,7 @@ kubectl get svc
 ***Note***:  Edit your service and change in the http nodeport:`port no.` and copy the EC2 instance public ip and past in your browser.
 
 ```
-kubectl edit svc prometheus-server-ext
+kubectl edit svc prometheus-server
 ```
 
 ![Screenshot ](https://i.imgur.com/6wgnFVh.png)
